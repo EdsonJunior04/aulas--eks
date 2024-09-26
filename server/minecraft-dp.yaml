@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft-dp
+  namespace: minecraft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minecraft
+  template:
+    metadata:
+      labels:
+        app: minecraft
+    spec:
+      containers:
+      - name: minecraft-container
+        image: itzg/minecraft-server
+        env:
+          - name: EULA
+            value: "TRUE"
+          - name: MOTD
+            value: Latest Release
+          - name: MODE
+            value: survival
+          - name: PVP
+            value: "false"
+          - name: ONLINE_MODE
+            value: "false"
+          - name: MAX_MEMORY
+            value: "1G"
+        ports:
+          - containerPort: 25565
+        volumeMounts:
+          - mountPath: /data
+            name: minecraft-data
+      volumes:
+        - name: minecraft-data
+          persistentVolumeClaim:
+            claimName: minecraft-pvc
